@@ -2,12 +2,6 @@ import React from 'react';
 
 function PopupWithForm({ title, name, children, isOpen, isSaving, saveButtonText, onClose, onSubmit}) {
   
-  function handleEscClose(evt) {
-    if (isOpen && evt.key === 'Escape') {
-        onClose();
-    }
-  }
-
   function handleOutClick(evt) {
     if (!evt.target.closest('.popup__overlay')) { 
       onClose();
@@ -15,12 +9,20 @@ function PopupWithForm({ title, name, children, isOpen, isSaving, saveButtonText
   }
   
   React.useEffect(() => {
-    document.addEventListener('keyup', handleEscClose);
-    
-    return () => {
-      document.removeEventListener('keyup', handleEscClose);
-    };
-  }); 
+    function handleEscClose(evt) {
+      if (evt.key === 'Escape') {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keyup', handleEscClose);
+      
+      return () => {
+        document.removeEventListener('keyup', handleEscClose);
+      }
+    }
+  }, [isOpen]); 
 
   const isOpenedClass = isOpen? 'popup_opened' : '';
 
@@ -29,7 +31,7 @@ function PopupWithForm({ title, name, children, isOpen, isSaving, saveButtonText
     <div className={`popup popup_${name} ${isOpenedClass}`} onClick={handleOutClick}>
 
       <div className="popup__container popup__overlay">
-        <form className={`popup__form popup__form_${name}`} name={name} noValidate onSubmit={onSubmit} >
+        <form className={`popup__form popup__form_${name}`} name={name} onSubmit={onSubmit} >
           <h3 className="popup__tittle">{title}</h3>
 
           {children}

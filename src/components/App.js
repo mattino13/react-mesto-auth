@@ -29,9 +29,8 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [cards, setCards] = React.useState([]);
-  const [isEditProfileSaving, setIsEditProfileSaving] = React.useState(false);
-  const [isEditAvatarSaving, setIsEditAvatarSaving] = React.useState(false);
-  const [isEditPlaceSaving, setIsEditPlaceSaving] = React.useState(false);
+  
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const navigate = useNavigate();
   
@@ -110,7 +109,7 @@ function App() {
   }
 
   function handleUpdateUser({name, about}) {
-    setIsEditProfileSaving(true);
+    setIsSaving(true);
 
     api.setUserInfo(name, about)
       .then((result) => {
@@ -118,11 +117,11 @@ function App() {
         closeAllPopups();
       })
       .catch((err) => console.log(err))
-      .finally(() => setIsEditProfileSaving(false));
+      .finally(() => setIsSaving(false));
   }
 
   function handleUpdateAvatar({avatar}) {
-    setIsEditAvatarSaving(true);
+    setIsSaving(true);
 
     api.setUserAvatar(avatar)
       .then((result) => {
@@ -131,11 +130,11 @@ function App() {
         }
       )
       .catch((err) => console.log(err))
-      .finally(() => setIsEditAvatarSaving(false));
+      .finally(() => setIsSaving(false));
   }
 
   function handleAddPlace(newCard) {
-    setIsEditPlaceSaving(true);
+    setIsSaving(true);
 
     api.createCard(newCard.place, newCard.link)
       .then((result) => {
@@ -144,20 +143,16 @@ function App() {
         }
       )
       .catch((err) => console.log(err))
-      .finally(() => setIsEditPlaceSaving(false));
+      .finally(() => setIsSaving(false));
   }
 
   function handleRegister({ email, password }) {
     auth.signup(email, password)
-      .then((result) => {
-          setIsInfoTooltipOpen(true);
-          setIsInfoTooltipSuccess(true);
-        }
-      )
+      .then(() => setIsInfoTooltipSuccess(true))
       .catch((err) => {
         console.log(err);
-        setIsInfoTooltipOpen(true);
-        setIsInfoTooltipSuccess(false);});
+        setIsInfoTooltipSuccess(false)})
+      .finally(() => setIsInfoTooltipOpen(true));
   }
 
   function handleLogin({ email, password }) {
@@ -166,14 +161,13 @@ function App() {
           localStorage.setItem('token', result.token);
           setLoggedIn(true);
           setEmail(email);
-          setIsInfoTooltipOpen(true);
           setIsInfoTooltipSuccess(true);
         }
       )
       .catch((err) => {
         console.log(err);
-        setIsInfoTooltipOpen(true);
-        setIsInfoTooltipSuccess(false)});
+        setIsInfoTooltipSuccess(false)})
+      .finally(() => setIsInfoTooltipOpen(true));
   }
 
   function handleLogout() {
@@ -210,9 +204,9 @@ function App() {
           <Route path="/sign-up" element={<Register onRegister={handleRegister}/>}/>
         </Routes>
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} isSaving={isEditProfileSaving} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} /> 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} isSaving={isEditAvatarSaving} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} isSaving={isEditPlaceSaving} onClose={closeAllPopups} onAddPlace={handleAddPlace} />
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} isSaving={isSaving} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} /> 
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} isSaving={isSaving} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} isSaving={isSaving} onClose={closeAllPopups} onAddPlace={handleAddPlace} />
         <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
         <InfoTooltip isOpen={isInfoTooltipOpen} isSuccess={isInfoTooltipSuccess} onClose={closeInfoTooltip} />
 

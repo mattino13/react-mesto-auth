@@ -2,7 +2,7 @@
   font-weight: 500;
   color: #FFFFFF;
   margin-right: 24px;
-  cursor: none;
+  cursor: default;
 }
 
 @media screen and (max-width: 420px) {

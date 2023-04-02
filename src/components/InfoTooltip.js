@@ -5,12 +5,6 @@ import imgSuccess from '../images/popup-success.svg';
 
 function InfoTooltip({ isSuccess, isOpen, onClose }) {
   
-  function handleEscClose(evt) {
-    if (isOpen && evt.key === 'Escape') {
-        onClose();
-    }
-  }
-
   function handleOutClick(evt) {
     if (!evt.target.closest('.popup__overlay')) { 
       onClose();
@@ -18,12 +12,20 @@ function InfoTooltip({ isSuccess, isOpen, onClose }) {
   }
   
   React.useEffect(() => {
-    document.addEventListener('keyup', handleEscClose);
+    function handleEscClose(evt) {
+      if (evt.key === 'Escape') {
+        onClose();
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keyup', handleEscClose);
     
-    return () => {
-      document.removeEventListener('keyup', handleEscClose);
+      return () => {
+        document.removeEventListener('keyup', handleEscClose);
+      }
     };
-  }); 
+  }, [isOpen]); 
 
   const isOpenedClass = isOpen? 'popup_opened' : '';
 

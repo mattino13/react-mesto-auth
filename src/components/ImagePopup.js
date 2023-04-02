@@ -3,18 +3,20 @@ import React from 'react';
 function ImagePopup({card, onClose}) {
  
   React.useEffect(() => {
-    document.addEventListener('keyup', handleEscClose);
-    
-    return () => {
-      document.removeEventListener('keyup', handleEscClose);
-    };
-  }); 
-  
-  function handleEscClose(evt) {
-    if (card && evt.key === 'Escape') {
+    function handleEscClose(evt) {
+      if (evt.key === 'Escape') {
         onClose();
+      }
     }
-  }
+
+    if (!(card === null)) {
+      document.addEventListener('keyup', handleEscClose);
+      
+      return () => {
+        document.removeEventListener('keyup', handleEscClose);
+      };
+    }
+  }, [!(card === null)]); 
 
   function handleOutClick(evt) {
     if (!evt.target.closest('.popup__overlay')) { 

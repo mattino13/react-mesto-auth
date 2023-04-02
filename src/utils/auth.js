@@ -7,8 +7,12 @@ class Auth {
     if (response.ok) {
       return response.json();
     } else {
-      return Promise.reject();
+      return Promise.reject(`Ошибка. HTTP статус: ${response.status}`);
     } 
+  }
+
+  _request(url, options) {
+    return fetch(url, options).then(res => this._checkResponse(res));
   }
 
   // регистрация
@@ -20,8 +24,7 @@ class Auth {
         password: password,
         email: email })};
 
-    return fetch(this._buildUrl('/signup'), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/signup'), options);
   }
 
   // авторизация
@@ -33,8 +36,7 @@ class Auth {
         password: password,
         email: email })};
 
-    return fetch(this._buildUrl('/signin'), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/signin'), options);
   }
 
   //проверка токена
@@ -48,8 +50,7 @@ class Auth {
       Authorization : `Bearer ${token}`
     };
 
-    return fetch(this._buildUrl('/users/me'), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/users/me'), options);
   }
 
   _buildUrl(suffix) {

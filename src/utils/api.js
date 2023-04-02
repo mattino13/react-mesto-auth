@@ -7,13 +7,16 @@ class Api {
     if (response.ok) {
       return response.json();
     } else {
-      return Promise.reject();
+      return Promise.reject(`Ошибка. HTTP статус: ${response.status}`);
     } 
   }
 
+  _request(url, options) {
+    return fetch(url, options).then(res => this._checkResponse(res));
+  }
+
   getInitialCards() {
-    return fetch(this._buildUrl('/cards'), this._options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/cards'), this._options);
   }
 
   deleteCard(cardId) {
@@ -21,8 +24,7 @@ class Api {
       ...this._options,
       method: 'DELETE'};
 
-    return fetch(this._buildUrl(`/cards/${cardId}`), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl(`/cards/${cardId}`), options);
   }
 
   createCard(name, link) {
@@ -31,13 +33,11 @@ class Api {
       method: 'POST',
       body: JSON.stringify({name, link})};
 
-    return fetch(this._buildUrl('/cards'), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/cards'), options);
   }
 
   getUserInfo() {
-    return fetch(this._buildUrl('/users/me'), this._options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/users/me'), this._options);
   }
 
   setUserInfo(name, about) {
@@ -46,8 +46,7 @@ class Api {
       method: 'PATCH', 
       body: JSON.stringify({name, about})};
     
-    return fetch(this._buildUrl('/users/me'), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/users/me'), options);
   }
 
   setUserAvatar(link) {
@@ -56,8 +55,7 @@ class Api {
       method: 'PATCH', 
       body: JSON.stringify({avatar: link})};
     
-    return fetch(this._buildUrl('/users/me/avatar'), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl('/users/me/avatar'), options);
   }
 
   toggleLike(cardId, newLikeStatus) {
@@ -65,8 +63,7 @@ class Api {
       ...this._options,
       method: newLikeStatus ? 'PUT' : 'DELETE'}; 
 
-    return fetch(this._buildUrl(`/cards/${cardId}/likes`), options)
-      .then(res => this._checkResponse(res));
+    return this._request(this._buildUrl(`/cards/${cardId}/likes`), options);
   }
 
   _buildUrl(suffix) {
