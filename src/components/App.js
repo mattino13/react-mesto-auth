@@ -199,7 +199,6 @@ function App() {
             } 
           />
           
-
           <Route path="/sign-in" element={<Login onLogin={handleLogin}/>}/>
           <Route path="/sign-up" element={<Register onRegister={handleRegister}/>}/>
         </Routes>
